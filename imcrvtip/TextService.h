@@ -123,6 +123,7 @@ public:
 	void _EndComposition(ITfContext *pContext);
 	void _CancelComposition(TfEditCookie ec, ITfContext *pContext);
 	void _ClearComposition();
+	void _ConfirmComposition();
 
 	// LanguageBar
 	void _UpdateLanguageBar(BOOL showinputmode = TRUE);

@@ -410,7 +410,7 @@ void CTextService::_KeyboardOpenCloseChanged(BOOL showinputmode)
 		_SaveUserDic();
 
 		_ResetStatus();
-		_ClearComposition();
+		_ConfirmComposition();
 
 		_UninitD2D();
 

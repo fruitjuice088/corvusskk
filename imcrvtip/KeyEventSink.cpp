@@ -235,7 +235,7 @@ STDAPI CTextService::OnPreservedKey(ITfContext *pic, REFGUID rguid, BOOL *pfEate
 	{
 		if (fOpen)
 		{
-			_ClearComposition();
+			_ConfirmComposition();
 
 			_SetKeyboardOpen(FALSE);
 		}

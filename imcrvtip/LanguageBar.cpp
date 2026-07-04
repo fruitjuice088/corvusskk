@@ -251,7 +251,7 @@ STDAPI CLangBarItemButton::OnClick(TfLBIClick click, POINT pt, const RECT *prcAr
 
 				if (fOpen)
 				{
-					_pTextService->_ClearComposition();
+					_pTextService->_ConfirmComposition();
 				}
 				else
 				{
@@ -365,7 +365,7 @@ STDAPI CLangBarItemButton::OnMenuSelect(UINT wID)
 	case IDM_DIRECT:
 		if (_pTextService->_IsKeyboardOpen())
 		{
-			_pTextService->_ClearComposition();
+			_pTextService->_ConfirmComposition();
 
 			_pTextService->inputmode = im_direct;
 			_pTextService->_SetKeyboardOpen(FALSE);

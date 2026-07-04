@@ -242,3 +242,55 @@ void CTextService::_ClearComposition()
 		}
 	}
 }
+
+class CConfirmCompositionEditSession : public CEditSessionBase
+{
+public:
+	CConfirmCompositionEditSession(CTextService *pTextService, ITfContext *pContext) : CEditSessionBase(pTextService, pContext)
+	{
+	}
+
+	// ITfEditSession
+	STDMETHODIMP DoEditSession(TfEditCookie ec)
+	{
+		_pTextService->_HandleCharReturn(ec, _pContext);
+		return S_OK;
+	}
+};
+
+// CorvusSKK は IME OFF 系統の操作(PreservedKeyOff、言語バー)で
+// 一貫して _ClearComposition() を呼ぶ設計のため、その対称として
+// 未確定文字列を破棄せず確定する版を用意する。
+// _EndComposition() だけでは見出し語入力中の▽▼マーカーが
+// テキストに残るため、通常のEnter確定と同じ _HandleCharReturn() を使う。
+void CTextService::_ConfirmComposition()
+{
+	HRESULT hr;
+
+	_EndCandidateList();
+	showcandlist = FALSE;
+
+	_EndInputModeWindow();
+
+	if (_IsComposing())
+	{
+		CComPtr<ITfDocumentMgr> pDocumentMgr;
+		if (SUCCEEDED(_pThreadMgr->GetFocus(&pDocumentMgr)) && (pDocumentMgr != nullptr))
+		{
+			CComPtr<ITfContext> pContext;
+			if (SUCCEEDED(pDocumentMgr->GetTop(&pContext)) && (pContext != nullptr))
+			{
+				try
+				{
+					CComPtr<ITfEditSession> pEditSession;
+					pEditSession.Attach(
+						new CConfirmCompositionEditSession(this, pContext));
+					pContext->RequestEditSession(_ClientId, pEditSession, TF_ES_ASYNCDONTCARE | TF_ES_READWRITE, &hr);
+				}
+				catch (...)
+				{
+				}
+			}
+		}
+	}
+}
